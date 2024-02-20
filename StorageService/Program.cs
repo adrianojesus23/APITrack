@@ -1,4 +1,8 @@
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using StorageService.Helps;
+
 namespace StorageService
 {
     public class Program
@@ -13,6 +17,12 @@ namespace StorageService
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //Configurations services
+            //Get value Logging
+            var appSettings = builder.Configuration.GetSection("LogFilePath").Get<AppSettings>();
+
+            _ = builder.Services.AddSingleton(appSettings);
 
             var app = builder.Build();
 
@@ -32,6 +42,7 @@ namespace StorageService
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
 
+           
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
             {
                 var forecast = Enumerable.Range(1, 5).Select(index =>

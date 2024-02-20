@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServicesPixel", "ServicesPi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelServices", "PixelService\PixelServices.csproj", "{1013E851-F62D-48D2-BFE0-0F13E3074CC8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StorageServices", "StorageServices", "{733C564F-0D5C-48F1-9F15-6C6784890D05}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceStorages", "ServiceStorages", "{733C564F-0D5C-48F1-9F15-6C6784890D05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageService", "StorageService\StorageService.csproj", "{BAC2B2BF-6E93-4098-9023-7B84BAA6AF9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageServices", "StorageService\StorageServices.csproj", "{BAC2B2BF-6E93-4098-9023-7B84BAA6AF9A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{0DB7C335-4170-4A7E-A86D-8F71C5661782}"
 EndProject
