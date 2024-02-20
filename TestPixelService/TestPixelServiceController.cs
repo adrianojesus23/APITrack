@@ -1,6 +1,6 @@
 namespace TestPixelServices
 {
-    public class TestPixelService
+    public class TestPixelServiceController
     {
         [Fact]
         public void Test1()

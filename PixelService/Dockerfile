@@ -9,17 +9,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["PixelService/PixelService.csproj", "PixelService/"]
-RUN dotnet restore "./PixelService/./PixelService.csproj"
+COPY ["PixelServices/PixelServices.csproj", "PixelServices/"]
+RUN dotnet restore "./PixelServices/./PixelServices.csproj"
 COPY . .
-WORKDIR "/src/PixelService"
-RUN dotnet build "./PixelService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/PixelServices"
+RUN dotnet build "./PixelServices.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./PixelService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./PixelServices.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PixelService.dll"]
+ENTRYPOINT ["dotnet", "PixelServices.dll"]

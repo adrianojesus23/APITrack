@@ -1,5 +1,8 @@
 
+using Microsoft.AspNetCore.Mvc;
 using PixelServices.Services;
+using StorageServices.Services;
+using System.Net;
 
 namespace PixelServices
 {
@@ -16,6 +19,7 @@ namespace PixelServices
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddTransient<IPixelService, PixelService>();
+            builder.Services.AddTransient<IStorageService, StorageService>();
 
             var app = builder.Build();
 
@@ -30,25 +34,22 @@ namespace PixelServices
 
             app.UseAuthorization();
 
-            var summaries = new[]
+            //Controllers:
+            app.MapGet("/track", async ([FromServices] IPixelService pixelService,
+                                        [FromServices] IStorageService storageService,
+                                         HttpContext context) =>
             {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
+                //Get information by http context
+                var resultContext = await pixelService.GetPixel(context);
 
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+                //Send information to service storage
+                await pixelService.WritePixel(resultContext);
+
+                var image = await pixelService.GetMemoryImage(context);
+
+                // Return a transparent 1-pixel image in GIF format
+                return Results.File(image, "image/gif");
+            });
 
             app.Run();
         }

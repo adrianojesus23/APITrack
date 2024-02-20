@@ -1,4 +1,4 @@
-﻿namespace StorageService.Helps
+﻿namespace StorageServices.Helps
 {
     public class AppSettings
     {

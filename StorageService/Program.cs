@@ -1,9 +1,10 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using StorageService.Helps;
+using StorageServices.Helps;
+using StorageServices.Services;
 
-namespace StorageService
+namespace StorageServices
 {
     public class Program
     {
@@ -17,13 +18,8 @@ namespace StorageService
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            //Configurations services
-            //Get value Logging
-            var appSettings = builder.Configuration.GetSection("LogFilePath").Get<AppSettings>();
-
-            _ = builder.Services.AddSingleton(appSettings);
-
+            builder.Services.AddTransient<IStorageService, StorageService>();
+            string logFilePath = builder.Configuration.GetValue<string>("LogFilePath");
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -37,26 +33,20 @@ namespace StorageService
 
             app.UseAuthorization();
 
-            var summaries = new[]
+            app.MapGet("GetStore", async ()
+                       =>
             {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
+                return await Task.FromResult(new AppSettings { LogFilePath = logFilePath });
+            });
 
-           
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+
+            app.MapPost("CreateStore", async (IStorageService storageService, HttpContext context) =>
             {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+                await storageService.CreateStore(context, logFilePath);
+
+                context.Response.StatusCode = 200;
+            });
+
 
             app.Run();
         }

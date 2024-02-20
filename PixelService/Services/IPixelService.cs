@@ -1,8 +1,11 @@
-﻿namespace PixelServices.Services
+﻿using PixelServices.Models;
+
+namespace PixelServices.Services
 {
     public interface IPixelService
     {
-        Task PixelRequest(HttpContext context);
-        Task SendToStorage(string refer, string user, string ip);
+        Task<MemoryStream> GetMemoryImage(HttpContext context);
+        Task<PixelModel> GetPixel(HttpContext context);
+        Task WritePixel(PixelModel resultContext);
     }
 }
