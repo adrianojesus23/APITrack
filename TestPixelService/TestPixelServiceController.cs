@@ -14,6 +14,7 @@ using PixelServices.Models;
 using PixelServices.Services;
 using StorageServices.Services;
 using System;
+using System.Net;
 
 namespace TestPixelServices
 {
@@ -23,40 +24,24 @@ namespace TestPixelServices
         public async Task TrackGet_ReturnsGifImage()
         {
             // Arrange
-            var mockPixelService = new Mock<IPixelService>();
-            var mockStorageService = new Mock<IStorageService>();
-            var mockHttpContext = new DefaultHttpContext();
-
-            var transparentGif = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
-
-            var image = new MemoryStream(transparentGif);
-            mockPixelService.Setup(service => service.GetMemoryImage(It.IsAny<HttpContext>())).ReturnsAsync(image);
-
-            mockStorageService.Setup(service => service.CreateStore(It.IsAny<HttpContext>(), "https://localhost:7105/CreateStore"));
-
-            var pixelModel = new PixelModel()
-            {
-                 IpAddress = "127.0.0.1",
-                 Referrer = "https://localhost:7019/swagger/index.html",
-                 UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
-            };
-            mockPixelService.Setup(service => service.GetPixel(It.IsAny<HttpContext>())).ReturnsAsync(pixelModel);
-
             await using var application = new TestingApplication();
 
             var client = application.CreateClient();
 
+            var transparentGif = Convert.FromBase64String("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+
             // Act
-            var result = await client.GetAsync("/track");
+            var response = await client.GetAsync("/track");
+
+            var content = await response.Content.ReadAsByteArrayAsync();
 
             // Assert
-            var fileResult = Assert.IsType<FileResult>(result);
-            Assert.Equal("image/gif", fileResult.ContentType);
-           // Assert.Equal(image, fileResult.c);
+            Assert.Equal(transparentGif, content);
 
-            mockPixelService.Verify(service => service.GetPixel(mockHttpContext), Times.Once);
-            mockPixelService.Verify(service => service.WritePixel(pixelModel), Times.Once);
-            mockPixelService.Verify(service => service.GetMemoryImage(mockHttpContext), Times.Once);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
         }
+
+      
     }
 }

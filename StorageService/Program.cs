@@ -45,6 +45,8 @@ namespace StorageServices
                 await storageService.CreateStore(context, logFilePath);
 
                 context.Response.StatusCode = 200;
+
+                return Results.Ok("Write log");
             });
 
 

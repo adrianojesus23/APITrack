@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PixelServices;
+using PixelServices.Models;
 using PixelServices.Services;
 using StorageServices.Services;
 using System;
@@ -23,6 +24,16 @@ namespace TestPixelServices
             });
 
             return base.CreateHost(builder);
+        }
+
+        public static PixelModel GetPixel()
+        {
+            return new PixelModel()
+            {
+                IpAddress = "127.0.0.1",
+                Referrer = "https://localhost:7019/swagger/index.html",
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+            };
         }
     }
 }
