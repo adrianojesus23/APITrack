@@ -1,4 +1,4 @@
-namespace PixelServices
+namespace StorageService
 {
     public class WeatherForecast
     {
